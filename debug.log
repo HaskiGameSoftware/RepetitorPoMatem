@@ -120,3 +120,4 @@ INFO 2025-12-14 13:19:46,714 basehttp "GET /about/ HTTP/1.1" 200 10794
 WARNING 2025-12-14 13:19:46,811 basehttp "GET /static/img/favicon.ico HTTP/1.1" 404 1861
 INFO 2025-12-14 13:19:56,870 basehttp "GET /courses/ HTTP/1.1" 200 43857
 WARNING 2025-12-14 13:19:56,997 basehttp "GET /static/img/favicon.ico HTTP/1.1" 404 1861
+INFO 2025-12-15 18:28:01,553 autoreload Watching for file changes with StatReloader
