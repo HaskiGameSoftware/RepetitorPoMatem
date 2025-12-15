@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}О репетиторе - Репетитор по математике{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="text-center mb-5">О репетиторе</h1>
+            
+            <!-- Фото и основная информация -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-4 text-center mb-3 mb-md-0">
+                            <img src="https://daily.hse.ru/storage/438123_diller0054.jpg" alt="Анна Сергеевна - репетитор по математике" class="img-fluid rounded-circle shadow" style="max-width: 250px;">
+                        </div>
+                        <div class="col-md-8">
+                            <h2 class="card-title">Мой опыт и квалификация</h2>
+                            <p class="lead">Меня зовут Анна Сергеевна, я профессиональный репетитор по математике с 12-летним опытом работы.</p>
+                        </div>
+                    </div>
+                    
+                    <h5 class="mt-4">Образование:</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">МГУ им. Ломоносова, механико-математический факультет (диплом с отличием)</li>
+                        <li class="list-group-item">Кандидат физико-математических наук</li>
+                        <li class="list-group-item">Сертификат "Методика подготовки к ЕГЭ по математике"</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">Мой подход к обучению</h2>
+                    <p>Я считаю, что математика - это не просто школьный предмет, а увлекательная наука, которая развивает логическое мышление и учит решать сложные задачи.</p>
+                    <h5>Принципы работы:</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul>
+                                <li>Индивидуальный подход</li>
+                                <li>Понятное объяснение</li>
+                                <li>Контроль прогресса</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul>
+                                <li>Подготовка без стресса</li>
+                                <li>Развитие мышления</li>
+                                <li>Практическая направленность</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Мои достижения</h2>
+                    <p>За годы работы я подготовила более 200 учеников:</p>
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-3">
+                            <div class="bg-primary text-white p-3 rounded">
+                                <h4>95%</h4>
+                                <p>ЕГЭ на 80+ баллов</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="bg-success text-white p-3 rounded">
+                                <h4>45</h4>
+                                <p>ЕГЭ на 90+ баллов</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="bg-warning text-white p-3 rounded">
+                                <h4>15</h4>
+                                <p>Победителей олимпиад</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="bg-info text-white p-3 rounded">
+                                <h4>100%</h4>
+                                <p>Поступление в вузы</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Стили для фото */
+.img-fluid {
+    transition: transform 0.3s ease;
+}
+
+.img-fluid:hover {
+    transform: scale(1.03);
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .rounded-circle {
+        max-width: 200px !important;
+    }
+}
+
+/* Дополнительные стили для карточек */
+.card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+</style>
+{% endblock %}

@@ -1,0 +1,580 @@
+{% extends 'base.html' %}
+
+{% block title %}Курсы - Репетитор по математике{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-5">Наши курсы</h1>
+    
+    <!-- Индикатор корзины вверху страницы -->
+    {% if cart and cart.items_count > 0 %}
+    <div class="alert alert-info alert-dismissible fade show mb-4" role="alert">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <i class="fas fa-shopping-cart me-2"></i>
+                В вашей корзине <strong>{{ cart.items_count }}</strong> курсов на сумму <strong>{{ cart.total_price }} ₽</strong>
+            </div>
+            <div>
+                <a href="{% url 'homepage:cart' %}" class="btn btn-sm btn-primary me-2">
+                    <i class="fas fa-eye me-1"></i>Перейти в корзину
+                </a>
+                <a href="{% url 'homepage:checkout' %}" class="btn btn-sm btn-success">
+                    <i class="fas fa-check me-1"></i>Оформить заказ
+                </a>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    
+    <div class="row">
+        {% for course in courses %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header text-white text-center {% if course.is_full %}bg-danger{% else %}bg-primary{% endif %}">
+                    <h4 class="mb-0">{{ course.title }}</h4>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-success">{{ course.price }} ₽</h5>
+                    <p class="card-text flex-grow-1">{{ course.description }}</p>
+                    
+                    <!-- Индикатор занятости -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-muted">Мест занято:</small>
+                            <small class="{% if course.is_full %}text-danger{% else %}text-success{% endif %}">
+                                {{ course.students_count }}/{{ course.max_students }}
+                            </small>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar {% if course.is_full %}bg-danger{% else %}bg-success{% endif %}" 
+                                 role="progressbar" 
+                                 style="width: {% widthratio course.students_count course.max_students 100 %}%"
+                                 aria-valuenow="{{ course.students_count }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="{{ course.max_students }}">
+                            </div>
+                        </div>
+                        <div class="text-center mt-1">
+                            <small class="{% if course.is_full %}text-danger{% else %}text-success{% endif %}">
+                                {% if course.is_full %}
+                                    <i class="fas fa-times-circle me-1"></i>Мест нет
+                                {% else %}
+                                    <i class="fas fa-check-circle me-1"></i>Осталось мест: {{ course.available_slots }}
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-auto">
+                        <p class="text-muted"><small>Продолжительность: {{ course.duration }}</small></p>
+                        
+                        <!-- Кнопки действий -->
+                        {% if course.is_full %}
+                            <button type="button" class="btn btn-danger w-100" disabled>
+                                <i class="fas fa-ban me-2"></i>Мест нет
+                            </button>
+                            <div class="alert alert-warning mt-2 p-2 text-center">
+                                <small>
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Запись закрыта. Все места заняты.
+                                </small>
+                            </div>
+                        {% else %}
+                            <div class="d-flex gap-2">
+                                <!-- Кнопка для открытия формы записи -->
+                                <button type="button" class="btn btn-success w-100" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#orderModal{{ course.id }}">
+                                    <i class="fas fa-shopping-cart me-2"></i>Записаться
+                                </button>
+                                
+                                <!-- Кнопка добавления в корзину -->
+                                <a href="{% url 'homepage:add_to_cart' course.id %}" 
+                                   class="btn btn-outline-primary btn-add-to-cart"
+                                   data-course-id="{{ course.id }}"
+                                   data-course-title="{{ course.title }}"
+                                   title="Добавить в корзину">
+                                    <i class="fas fa-cart-plus"></i>
+                                </a>
+                            </div>
+                            
+                            <!-- Быстрая покупка (опционально) -->
+                            <div class="mt-2">
+                                <a href="{% url 'homepage:buy_course' course.id %}" 
+                                   class="btn btn-outline-success w-100 btn-sm"
+                                   onclick="return confirm('Вы уверены, что хотите сразу купить этот курс?')">
+                                    <i class="fas fa-bolt me-1"></i>Купить сразу
+                                </a>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Проверка, есть ли курс уже в корзине -->
+                        {% if cart %}
+                            {% for item in cart.items.all %}
+                                {% if item.course.id == course.id %}
+                                <div class="alert alert-success mt-2 p-2 text-center">
+                                    <small>
+                                        <i class="fas fa-check-circle me-1"></i>
+                                        Этот курс уже в вашей корзине
+                                        <a href="{% url 'homepage:cart' %}" class="text-decoration-none ms-1">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                    </small>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно для формы заказа -->
+        {% if not course.is_full %}
+        <div class="modal fade" id="orderModal{{ course.id }}" tabindex="-1" aria-labelledby="orderModalLabel{{ course.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="orderModalLabel{{ course.id }}">Запись на курс</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="POST" action="{% url 'homepage:buy_course' course.id %}">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            <div class="alert alert-info">
+                                <small>
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Осталось свободных мест: <strong>{{ course.available_slots }}</strong>
+                                </small>
+                            </div>
+                            
+                            <h6 class="mb-3">Курс: {{ course.title }}</h6>
+                            <p class="text-muted">Цена: {{ course.price }} ₽</p>
+                            <p class="text-muted">Продолжительность: {{ course.duration }}</p>
+                            
+                            <div class="mb-3">
+                                <label for="studentName{{ course.id }}" class="form-label">Имя ученика *</label>
+                                <input type="text" class="form-control" id="studentName{{ course.id }}" 
+                                       name="student_name" required placeholder="Введите имя ученика">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="email{{ course.id }}" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="email{{ course.id }}" 
+                                       name="email" required placeholder="example@mail.com">
+                                {% if user.is_authenticated %}
+                                <small class="form-text text-muted">
+                                    Ваш email: {{ user.email }}
+                                </small>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="phone{{ course.id }}" class="form-label">Телефон</label>
+                                <input type="tel" class="form-control" id="phone{{ course.id }}" 
+                                       name="phone" placeholder="+7 (___) ___-__-__">
+                            </div>
+                            
+                            <div class="alert alert-warning">
+                                <small>
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    Запись подтверждается после оплаты. Количество мест ограничено.
+                                </small>
+                            </div>
+                            
+                            <!-- Дополнительные опции -->
+                            <div class="border-top pt-3 mt-3">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="addToCartAfter{{ course.id }}" name="add_to_cart">
+                                    <label class="form-check-label" for="addToCartAfter{{ course.id }}">
+                                        <small>Добавить в корзину (можно купить несколько курсов)</small>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                            
+                            <!-- Кнопки действий -->
+                            <div class="btn-group" role="group">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-check me-2"></i>Записаться
+                                </button>
+                                
+                                <!-- Кнопка добавления в корзину внутри модалки -->
+                                <a href="{% url 'homepage:add_to_cart' course.id %}" 
+                                   class="btn btn-outline-primary"
+                                   data-bs-dismiss="modal"
+                                   onclick="showAddToCartSuccess('{{ course.title }}')">
+                                    <i class="fas fa-cart-plus me-2"></i>В корзину
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="alert alert-info">
+                <h4>Курсы временно недоступны</h4>
+                <p>Новые курсы будут доступны в ближайшее время.</p>
+                <a href="{% url 'service:service' %}" class="btn btn-primary mt-2">
+                    Посмотреть услуги
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="text-center mt-5">
+        {% if cart and cart.items_count > 0 %}
+        <div class="d-flex flex-wrap justify-content-center gap-3 mb-4">
+            <a href="{% url 'homepage:cart' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-shopping-cart me-2"></i>
+                Перейти в корзину ({{ cart.items_count }})
+            </a>
+            <a href="{% url 'homepage:checkout' %}" class="btn btn-success btn-lg">
+                <i class="fas fa-check me-2"></i>Оформить заказ
+            </a>
+            <a href="{% url 'homepage:clear_cart' %}" 
+               class="btn btn-outline-danger btn-lg"
+               onclick="return confirm('Очистить всю корзину?')">
+                <i class="fas fa-trash me-2"></i>Очистить корзину
+            </a>
+        </div>
+        {% endif %}
+        
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            <a href="{% url 'homepage:personal_cabinet' %}" class="btn btn-outline-primary">
+                <i class="fas fa-user me-2"></i>В личный кабинет
+            </a>
+            <a href="{% url 'service:service' %}" class="btn btn-outline-info">
+                <i class="fas fa-list-alt me-2"></i>Услуги и цены
+            </a>
+            <a href="{% url 'homepage:all_reviews' %}" class="btn btn-outline-warning">
+                <i class="fas fa-star me-2"></i>Отзывы
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.progress {
+    background-color: #e9ecef;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    transition: width 0.3s ease;
+}
+
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.modal-content {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+    border-radius: 10px 10px 0 0;
+}
+
+.btn-close-white {
+    filter: invert(1);
+}
+
+.btn-add-to-cart {
+    width: 50px;
+    min-width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.btn-add-to-cart:hover {
+    transform: scale(1.1);
+    background-color: #0d6efd;
+    color: white;
+}
+
+.btn-group .btn {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.alert-success {
+    background-color: #d1e7dd;
+    border-color: #badbcc;
+}
+
+/* Анимация для добавления в корзину */
+@keyframes cartPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.btn-add-to-cart.added {
+    animation: cartPulse 0.5s ease;
+    background-color: #198754;
+    color: white;
+    border-color: #198754;
+}
+
+/* Стили для индикатора корзины */
+.badge {
+    font-size: 0.7rem;
+    padding: 0.2em 0.5em;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .d-flex.gap-2 {
+        flex-direction: column;
+        gap: 0.5rem !important;
+    }
+    
+    .btn-add-to-cart {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn-group .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .d-flex.flex-wrap.justify-content-center.gap-3 {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .d-flex.flex-wrap.justify-content-center.gap-3 .btn-lg {
+        width: 100%;
+        max-width: 300px;
+        margin-bottom: 0.5rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Маска для телефона
+    const phoneInputs = document.querySelectorAll('input[type="tel"]');
+    phoneInputs.forEach(input => {
+        input.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.startsWith('7') || value.startsWith('8')) {
+                value = value.substring(1);
+            }
+            if (value.length > 10) {
+                value = value.substring(0, 10);
+            }
+            
+            let formatted = '';
+            if (value.length > 0) {
+                formatted = '+7 (' + value.substring(0, 3);
+                if (value.length > 3) {
+                    formatted += ') ' + value.substring(3, 6);
+                }
+                if (value.length > 6) {
+                    formatted += '-' + value.substring(6, 8);
+                }
+                if (value.length > 8) {
+                    formatted += '-' + value.substring(8, 10);
+                }
+            }
+            e.target.value = formatted;
+        });
+    });
+    
+    // Анимация прогресс-баров
+    const progressBars = document.querySelectorAll('.progress-bar');
+    progressBars.forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0%';
+        setTimeout(() => {
+            bar.style.width = width;
+        }, 300);
+    });
+    
+    // Автозаполнение email для авторизованных пользователей
+    {% if user.is_authenticated %}
+    const emailInputs = document.querySelectorAll('input[type="email"]');
+    emailInputs.forEach(input => {
+        if (!input.value) {
+            input.value = "{{ user.email }}";
+        }
+    });
+    {% endif %}
+    
+    // Обработка добавления в корзину
+    const addToCartButtons = document.querySelectorAll('.btn-add-to-cart');
+    addToCartButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const courseId = this.getAttribute('data-course-id');
+            const courseTitle = this.getAttribute('data-course-title');
+            
+            // Визуальная обратная связь
+            this.classList.add('added');
+            setTimeout(() => {
+                this.classList.remove('added');
+            }, 500);
+            
+            // Отправляем запрос на добавление в корзину
+            fetch(this.href, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Показываем уведомление
+                    showAddToCartSuccess(courseTitle);
+                    
+                    // Обновляем счетчик корзины
+                    updateCartCount();
+                    
+                    // Обновляем страницу через 1 секунду
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    showAddToCartError();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAddToCartError();
+            });
+        });
+    });
+    
+    // Функция для показа успешного добавления в корзину
+    window.showAddToCartSuccess = function(courseTitle) {
+        // Создаем уведомление
+        const notification = document.createElement('div');
+        notification.className = 'alert alert-success alert-dismissible fade show position-fixed';
+        notification.style.cssText = `
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            animation: slideIn 0.3s ease;
+        `;
+        notification.innerHTML = `
+            <i class="fas fa-check-circle me-2"></i>
+            Курс "<strong>${courseTitle}</strong>" добавлен в корзину!
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Автоматическое скрытие через 3 секунды
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    };
+    
+    // Функция для обновления счетчика корзины
+    function updateCartCount() {
+        // Отправляем запрос для получения актуального количества товаров
+        fetch('{% url "homepage:cart" %}', {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            // Можно обновить только счетчик корзины
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const cartCountElement = doc.querySelector('.cart-count');
+            if (cartCountElement) {
+                const currentCartCount = document.querySelector('.cart-count');
+                if (currentCartCount) {
+                    currentCartCount.textContent = cartCountElement.textContent;
+                }
+            }
+        })
+        .catch(error => console.error('Error updating cart count:', error));
+    }
+    
+    // Функция для показа ошибки добавления в корзину
+    function showAddToCartError() {
+        const notification = document.createElement('div');
+        notification.className = 'alert alert-danger alert-dismissible fade show position-fixed';
+        notification.style.cssText = `
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+            animation: slideIn 0.3s ease;
+        `;
+        notification.innerHTML = `
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            Произошла ошибка при добавлении в корзину. Попробуйте еще раз.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+    
+    // Анимация для уведомлений
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Подтверждение покупки
+    const buyNowButtons = document.querySelectorAll('.btn-outline-success');
+    buyNowButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            if (!confirm('Вы уверены, что хотите сразу купить этот курс? Вы будете перенаправлены на страницу оформления заказа.')) {
+                e.preventDefault();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

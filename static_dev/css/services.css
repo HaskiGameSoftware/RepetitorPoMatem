@@ -1,0 +1,221 @@
+/* Стили для секции услуг */
+.services-section {
+    background-color: #f8f9fa;
+}
+
+.service-btn {
+    transition: all 0.3s ease;
+    border-width: 2px;
+    font-weight: 500;
+}
+
+.service-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.service-btn.active {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+}
+
+.service-detail-card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.service-detail-card:hover {
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.service-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.service-info-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border: none;
+    color: white;
+}
+
+.service-info-card h6 {
+    color: white;
+    font-weight: bold;
+}
+
+.service-stats {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    border: none;
+    color: white;
+}
+
+.service-stats h6 {
+    color: white;
+    font-weight: bold;
+}
+
+.badge-new {
+    background-color: #198754;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.collapse {
+    transition: all 0.3s ease;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .service-btn {
+        flex: 1 0 auto;
+        min-width: 150px;
+        margin: 5px;
+        font-size: 0.9rem;
+    }
+    
+    .service-buttons-container {
+        justify-content: center !important;
+    }
+    
+    .service-detail-card .card-body {
+        padding: 1rem;
+    }
+    
+    .service-info-card {
+        margin-top: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .service-btn {
+        min-width: 120px;
+        font-size: 0.8rem;
+        padding: 0.5rem 0.75rem;
+    }
+    
+    .service-header h4 {
+        font-size: 1.1rem;
+    }
+}
+
+/* Стили для рейтингов */
+.rating-display {
+    font-size: 2.5rem;
+}
+
+.rating-small {
+    font-size: 1rem;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.star {
+    color: #ddd;
+}
+
+.star.active {
+    color: #ffc107;
+}
+
+.rating-value {
+    font-weight: bold;
+    margin-right: 10px;
+    min-width: 30px;
+    display: inline-block;
+    text-align: center;
+}
+
+/* Анимация для рейтингов */
+@keyframes pulse-rating {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.rating-display .star.active {
+    animation: pulse-rating 2s infinite;
+}
+
+/* Стили для отзывов */
+.rating-display-small {
+    font-size: 1.2rem;
+}
+
+.rating-tiny {
+    font-size: 0.8rem;
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.star {
+    color: #ddd;
+}
+
+.star.active {
+    color: #ffc107;
+}
+
+.rating-value {
+    font-weight: bold;
+    min-width: 40px;
+    display: inline-block;
+    text-align: center;
+}
+
+/* Анимация для карточек отзывов */
+.review-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.review-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Стили для статистики */
+.stat-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+}
+
+.stat-card h3 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Адаптивность для отзывов */
+@media (max-width: 768px) {
+    .rating-display-small {
+        font-size: 1rem;
+    }
+    
+    .rating-tiny {
+        font-size: 0.7rem;
+    }
+    
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+    
+    .card-header .text-end {
+        margin-top: 10px;
+        width: 100%;
+        text-align: left !important;
+    }
+}

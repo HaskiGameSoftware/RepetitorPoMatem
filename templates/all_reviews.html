@@ -1,0 +1,594 @@
+{% extends 'base.html' %}
+
+{% block title %}Все отзывы - Репетитор по математике{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-5">Все отзывы учеников</h1>
+    
+    <!-- Статистика -->
+    <div class="row mb-5">
+        <div class="col-md-8 mx-auto">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h4>Общая статистика</h4>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h3>{{ total_reviews }}</h3>
+                            <p>Всего отзывов</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h3>{{ avg_ratings.overall }}/5</h3>
+                            <p>Средняя оценка</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h3>{{ courses.count }}</h3>
+                            <p>Доступных курсов</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Средние оценки -->
+    {% if avg_ratings.overall > 0 %}
+    <div class="row mb-5">
+        <div class="col-md-10 mx-auto">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h4 class="mb-0">Средние оценки преподавания</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <strong>Объяснение материала:</strong>
+                                <div class="text-end">
+                                    <div class="rating-value">{{ avg_ratings.explanation }}/5</div>
+                                    <div class="rating-small">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= avg_ratings.explanation %}
+                                            <span class="star active">★</span>
+                                            {% else %}
+                                            <span class="star">★</span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <strong>Индивидуальный подход:</strong>
+                                <div class="text-end">
+                                    <div class="rating-value">{{ avg_ratings.approach }}/5</div>
+                                    <div class="rating-small">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= avg_ratings.approach %}
+                                            <span class="star active">★</span>
+                                            {% else %}
+                                            <span class="star">★</span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <strong>Качество подготовки:</strong>
+                                <div class="text-end">
+                                    <div class="rating-value">{{ avg_ratings.preparation }}/5</div>
+                                    <div class="rating-small">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= avg_ratings.preparation %}
+                                            <span class="star active">★</span>
+                                            {% else %}
+                                            <span class="star">★</span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <strong>Поддержка ученика:</strong>
+                                <div class="text-end">
+                                    <div class="rating-value">{{ avg_ratings.support }}/5</div>
+                                    <div class="rating-small">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= avg_ratings.support %}
+                                            <span class="star active">★</span>
+                                            {% else %}
+                                            <span class="star">★</span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <strong>Общее впечатление:</strong>
+                                <div class="text-end">
+                                    <div class="rating-value">{{ avg_ratings.overall }}/5</div>
+                                    <div class="rating-small">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= avg_ratings.overall %}
+                                            <span class="star active">★</span>
+                                            {% else %}
+                                            <span class="star">★</span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Список всех отзывов -->
+    <div class="row">
+        <div class="col-12">
+            <h3 class="text-center mb-4">Все отзывы ({{ total_reviews }})</h3>
+            
+            {% if reviews %}
+                {% for review in reviews %}
+                <div class="card mb-4 review-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">{{ review.student_name }}</h5>
+                            <small class="text-muted">
+                                {% if review.course %}
+                                    Курс: {{ review.course.title }}
+                                {% else %}
+                                    Курс: Не указан
+                                {% endif %}
+                            </small>
+                        </div>
+                        <div class="text-end">
+                            <div class="rating-display-small">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= review.ratings.overall %}
+                                    <span class="star active">★</span>
+                                    {% else %}
+                                    <span class="star">★</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <small class="text-muted">{{ review.timestamp }}</small>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Основной текст отзыва -->
+                        <p class="card-text">{{ review.text }}</p>
+                        
+                        <!-- Детальные оценки -->
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <small>Объяснение материала:</small>
+                                    <div>
+                                        <span class="badge bg-primary">{{ review.ratings.explanation }}/5</span>
+                                        <div class="rating-tiny">
+                                            {% for i in "12345" %}
+                                                {% if forloop.counter <= review.ratings.explanation %}
+                                                <span class="star active">★</span>
+                                                {% else %}
+                                                <span class="star">★</span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <small>Индивидуальный подход:</small>
+                                    <div>
+                                        <span class="badge bg-primary">{{ review.ratings.approach }}/5</span>
+                                        <div class="rating-tiny">
+                                            {% for i in "12345" %}
+                                                {% if forloop.counter <= review.ratings.approach %}
+                                                <span class="star active">★</span>
+                                                {% else %}
+                                                <span class="star">★</span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <small>Качество подготовки:</small>
+                                    <div>
+                                        <span class="badge bg-primary">{{ review.ratings.preparation }}/5</span>
+                                        <div class="rating-tiny">
+                                            {% for i in "12345" %}
+                                                {% if forloop.counter <= review.ratings.preparation %}
+                                                <span class="star active">★</span>
+                                                {% else %}
+                                                <span class="star">★</span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <small>Поддержка ученика:</small>
+                                    <div>
+                                        <span class="badge bg-primary">{{ review.ratings.support }}/5</span>
+                                        <div class="rating-tiny">
+                                            {% for i in "12345" %}
+                                                {% if forloop.counter <= review.ratings.support %}
+                                                <span class="star active">★</span>
+                                                {% else %}
+                                                <span class="star">★</span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Информация о курсе (если есть) -->
+                        {% if review.course %}
+                        <div class="mt-4 pt-3 border-top">
+                            <h6><i class="fas fa-info-circle me-2"></i>Информация о курсе:</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-graduation-cap text-primary me-2"></i>
+                                        <span class="text-muted">{{ review.course.title }}</span>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-clock text-primary me-2"></i>
+                                        <span class="text-muted">{{ review.course.duration }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-ruble-sign text-primary me-2"></i>
+                                        <span class="text-muted">{{ review.course.price }} ₽</span>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-users text-primary me-2"></i>
+                                        <span class="text-muted">Макс. студентов: {{ review.course.max_students }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if review.course.description %}
+                            <div class="mt-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-align-left me-1"></i>
+                                    {{ review.course.description|truncatewords:20 }}
+                                </small>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center py-5">
+                    <div class="card">
+                        <div class="card-body">
+                            <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                            <h4>Пока нет отзывов</h4>
+                            <p class="text-muted">Будьте первым, кто оставит отзыв о занятиях!</p>
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'homepage:leave_review' %}" class="btn btn-warning">
+                                <i class="fas fa-star me-2"></i>Оставить первый отзыв
+                            </a>
+                            {% else %}
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="{% url 'homepage:login' %}" class="btn btn-warning">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Войти
+                                </a>
+                                <a href="{% url 'homepage:register' %}" class="btn btn-outline-primary">
+                                    <i class="fas fa-user-plus me-2"></i>Регистрация
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            
+            <!-- Пагинация (можно добавить позже) -->
+            {% if reviews|length > 10 %}
+            <nav aria-label="Навигация по отзывам" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                            <i class="fas fa-chevron-left me-1"></i>Назад
+                        </a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">
+                            Вперед<i class="fas fa-chevron-right ms-1"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Кнопки действий -->
+    <div class="text-center mt-5">
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            {% if user.is_authenticated %}
+            <a href="{% url 'homepage:leave_review' %}" class="btn btn-warning btn-lg">
+                <i class="fas fa-star me-2"></i>Оставить отзыв
+            </a>
+            {% else %}
+            <a href="{% url 'homepage:login' %}" class="btn btn-warning btn-lg">
+                <i class="fas fa-sign-in-alt me-2"></i>Войти, чтобы оставить отзыв
+            </a>
+            {% endif %}
+            <a href="{% url 'homepage:courses' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-graduation-cap me-2"></i>Посмотреть курсы
+            </a>
+            <a href="{% url 'homepage:index' %}" class="btn btn-outline-secondary btn-lg">
+                <i class="fas fa-home me-2"></i>На главную
+            </a>
+            {% if user.is_authenticated and user_reviews %}
+            <a href="{% url 'homepage:personal_cabinet' %}" class="btn btn-info btn-lg">
+                <i class="fas fa-user me-2"></i>Мой профиль
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.rating-display-small {
+    font-size: 1.2rem;
+    display: inline-block;
+}
+
+.rating-tiny {
+    font-size: 0.8rem;
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.rating-small {
+    font-size: 1rem;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.rating-value {
+    font-weight: bold;
+    min-width: 40px;
+    display: inline-block;
+    text-align: center;
+}
+
+.star {
+    color: #ddd;
+    transition: color 0.3s;
+}
+
+.star.active {
+    color: #ffc107;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    transition: background-color 0.3s;
+}
+
+.review-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid #e9ecef;
+}
+
+.review-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border-color: #0d6efd;
+}
+
+.review-card:hover .card-header {
+    background-color: #e9ecef;
+}
+
+.badge {
+    font-size: 0.8rem;
+    padding: 0.35em 0.65em;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}
+
+/* Анимация появления карточек */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.review-card {
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+}
+
+.review-card:nth-child(1) { animation-delay: 0.1s; }
+.review-card:nth-child(2) { animation-delay: 0.2s; }
+.review-card:nth-child(3) { animation-delay: 0.3s; }
+.review-card:nth-child(4) { animation-delay: 0.4s; }
+.review-card:nth-child(5) { animation-delay: 0.5s; }
+.review-card:nth-child(6) { animation-delay: 0.6s; }
+.review-card:nth-child(7) { animation-delay: 0.7s; }
+.review-card:nth-child(8) { animation-delay: 0.8s; }
+.review-card:nth-child(9) { animation-delay: 0.9s; }
+.review-card:nth-child(10) { animation-delay: 1.0s; }
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+        padding: 1rem;
+    }
+    
+    .card-header .text-end {
+        margin-top: 10px;
+        width: 100%;
+        text-align: left !important;
+    }
+    
+    .btn-lg {
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .d-flex.flex-wrap {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .d-flex.flex-wrap .btn-lg {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .rating-display-small {
+        font-size: 1rem;
+    }
+    
+    .rating-value {
+        font-size: 0.9rem;
+    }
+}
+
+/* Стили для статистики */
+.card.bg-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.card.bg-primary h3 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.card.bg-primary p {
+    opacity: 0.9;
+    margin-bottom: 0;
+}
+
+/* Стили для средних оценок */
+.card .card-header.bg-light {
+    background-color: #f8f9fa !important;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.card .card-header.bg-light h4 {
+    color: #343a40;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Подсветка звезд при наведении
+    const stars = document.querySelectorAll('.star');
+    stars.forEach(star => {
+        star.addEventListener('mouseover', function() {
+            const ratingValue = this.getAttribute('data-value');
+            if (ratingValue) {
+                const parent = this.closest('.rating-display-small, .rating-small, .rating-tiny');
+                const allStars = parent.querySelectorAll('.star');
+                allStars.forEach(s => {
+                    if (s.getAttribute('data-value') <= ratingValue) {
+                        s.style.color = '#ffc107';
+                    }
+                });
+            }
+        });
+        
+        star.addEventListener('mouseout', function() {
+            const parent = this.closest('.rating-display-small, .rating-small, .rating-tiny');
+            const allStars = parent.querySelectorAll('.star');
+            allStars.forEach(s => {
+                if (s.classList.contains('active')) {
+                    s.style.color = '#ffc107';
+                } else {
+                    s.style.color = '#ddd';
+                }
+            });
+        });
+    });
+    
+    // Анимация статистики при загрузке
+    const statNumbers = document.querySelectorAll('.card.bg-primary h3');
+    statNumbers.forEach(number => {
+        const originalText = number.textContent;
+        number.textContent = '0';
+        
+        setTimeout(() => {
+            let count = 0;
+            const target = parseInt(originalText);
+            const increment = Math.ceil(target / 30);
+            
+            const timer = setInterval(() => {
+                count += increment;
+                if (count >= target) {
+                    count = target;
+                    clearInterval(timer);
+                }
+                number.textContent = count;
+            }, 50);
+        }, 500);
+    });
+    
+    // Анимация средних оценок
+    const avgStars = document.querySelectorAll('.rating-small .star');
+    avgStars.forEach(star => {
+        const delay = Math.random() * 1000;
+        star.style.opacity = '0';
+        star.style.transform = 'scale(0)';
+        
+        setTimeout(() => {
+            star.style.transition = 'all 0.5s ease';
+            star.style.opacity = '1';
+            star.style.transform = 'scale(1)';
+        }, delay);
+    });
+    
+    // Плавная прокрутка к началу страницы при клике на кнопки
+    const actionButtons = document.querySelectorAll('.btn-lg');
+    actionButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            if (this.getAttribute('href') === '#') {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,326 @@
+{% extends 'base.html' %}
+
+{% block title %}Оставить отзыв - Репетитор по математике{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h3 class="mb-0"><i class="fas fa-star me-2"></i>Оставить отзыв</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <!-- Выбор курса -->
+                        <div class="mb-3">
+                            <label for="course_id" class="form-label">Выберите курс для отзыва *</label>
+                            <select class="form-select" id="course_id" name="course_id" required>
+                                <option value="">-- Выберите курс --</option>
+                                {% for course in purchased_courses %}
+                                <option value="{{ course.id }}">{{ course.title }}</option>
+                                {% endfor %}
+                            </select>
+                            <small class="form-text text-muted">
+                                Вы можете оставить отзыв только на курсы, которые приобрели.
+                            </small>
+                        </div>
+                        
+                        <!-- Информация о выбранном курсе -->
+                        <div id="courseInfo" class="alert alert-info d-none mb-3">
+                            <div id="courseDetails"></div>
+                        </div>
+                        
+                        <!-- Имя ученика -->
+                        <div class="mb-3">
+                            <label for="student_name" class="form-label">Ваше имя *</label>
+                            <input type="text" class="form-control" id="student_name" name="student_name" required 
+                                   placeholder="Как к вам обращаться?">
+                            <small class="form-text text-muted">
+                                Имя, которое будет отображаться в отзыве.
+                            </small>
+                        </div>
+                        
+                        <!-- Оценки характеристик -->
+                        <div class="mb-4">
+                            <h5>Оцените характеристики преподавания:</h5>
+                            
+                            <div class="rating-category mb-3">
+                                <label class="form-label">Объяснение материала</label>
+                                <div class="rating-stars" data-category="explanation">
+                                    {% for i in "12345" %}
+                                    <span class="star" data-value="{{ i }}">★</span>
+                                    {% endfor %}
+                                </div>
+                                <input type="hidden" name="rating_explanation" id="rating_explanation" required>
+                            </div>
+                            
+                            <div class="rating-category mb-3">
+                                <label class="form-label">Индивидуальный подход</label>
+                                <div class="rating-stars" data-category="approach">
+                                    {% for i in "12345" %}
+                                    <span class="star" data-value="{{ i }}">★</span>
+                                    {% endfor %}
+                                </div>
+                                <input type="hidden" name="rating_approach" id="rating_approach" required>
+                            </div>
+                            
+                            <div class="rating-category mb-3">
+                                <label class="form-label">Качество подготовки</label>
+                                <div class="rating-stars" data-category="preparation">
+                                    {% for i in "12345" %}
+                                    <span class="star" data-value="{{ i }}">★</span>
+                                    {% endfor %}
+                                </div>
+                                <input type="hidden" name="rating_preparation" id="rating_preparation" required>
+                            </div>
+                            
+                            <div class="rating-category mb-3">
+                                <label class="form-label">Поддержка ученика</label>
+                                <div class="rating-stars" data-category="support">
+                                    {% for i in "12345" %}
+                                    <span class="star" data-value="{{ i }}">★</span>
+                                    {% endfor %}
+                                </div>
+                                <input type="hidden" name="rating_support" id="rating_support" required>
+                            </div>
+                            
+                            <div class="rating-category mb-3">
+                                <label class="form-label">Общее впечатление</label>
+                                <div class="rating-stars" data-category="overall">
+                                    {% for i in "12345" %}
+                                    <span class="star" data-value="{{ i }}">★</span>
+                                    {% endfor %}
+                                </div>
+                                <input type="hidden" name="rating_overall" id="rating_overall" required>
+                            </div>
+                        </div>
+                        
+                        <!-- Текст отзыва -->
+                        <div class="mb-3">
+                            <label for="text" class="form-label">Текст отзыва *</label>
+                            <textarea class="form-control" id="text" name="text" rows="5" required 
+                                      placeholder="Поделитесь вашими впечатлениями от занятий..."></textarea>
+                            <small class="form-text text-muted">
+                                Минимальная длина: 10 символов. Расскажите о вашем опыте обучения.
+                            </small>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <small>
+                                <i class="fas fa-info-circle me-2"></i>
+                                Все поля обязательны для заполнения. Ваш отзыв поможет другим ученикам сделать правильный выбор.
+                                Отзывы проходят модерацию перед публикацией.
+                            </small>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-warning btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i>Отправить отзыв
+                            </button>
+                            <a href="{% url 'homepage:personal_cabinet' %}" class="btn btn-outline-secondary btn-lg ms-2">
+                                <i class="fas fa-arrow-left me-2"></i>Назад
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.rating-stars {
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+.star {
+    color: #ddd;
+    transition: color 0.2s;
+    margin-right: 5px;
+}
+
+.star:hover,
+.star.active {
+    color: #ffc107;
+}
+
+.rating-category {
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    transition: background-color 0.3s;
+}
+
+.rating-category label {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.rating-category.rated {
+    background-color: #fff3cd;
+}
+
+.form-control:focus {
+    border-color: #ffc107;
+    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Данные о курсах
+    const coursesData = {
+        {% for course in purchased_courses %}
+        {{ course.id }}: {
+            title: "{{ course.title }}",
+            description: "{{ course.description|escapejs }}",
+            price: "{{ course.price }}",
+            duration: "{{ course.duration }}"
+        },
+        {% endfor %}
+    };
+    
+    // Отображение информации о выбранном курсе
+    const courseSelect = document.getElementById('course_id');
+    const courseInfo = document.getElementById('courseInfo');
+    const courseDetails = document.getElementById('courseDetails');
+    
+    courseSelect.addEventListener('change', function() {
+        const courseId = this.value;
+        
+        if (courseId && coursesData[courseId]) {
+            const course = coursesData[courseId];
+            courseDetails.innerHTML = `
+                <h6>${course.title}</h6>
+                <p class="mb-1">${course.description}</p>
+                <small class="text-muted">
+                    <i class="fas fa-clock me-1"></i>${course.duration} | 
+                    <i class="fas fa-ruble-sign me-1"></i>${course.price} ₽
+                </small>
+            `;
+            courseInfo.classList.remove('d-none');
+        } else {
+            courseInfo.classList.add('d-none');
+        }
+    });
+    
+    // Инициализация звездных рейтингов
+    const ratingCategories = document.querySelectorAll('.rating-category');
+    
+    ratingCategories.forEach(category => {
+        const stars = category.querySelectorAll('.star');
+        const hiddenInput = category.querySelector('input[type="hidden"]');
+        
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const value = this.getAttribute('data-value');
+                hiddenInput.value = value;
+                
+                // Обновляем отображение звезд
+                stars.forEach(s => {
+                    if (s.getAttribute('data-value') <= value) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+                
+                // Подсвечиваем категорию
+                category.classList.add('rated');
+            });
+            
+            star.addEventListener('mouseover', function() {
+                const value = this.getAttribute('data-value');
+                stars.forEach(s => {
+                    if (s.getAttribute('data-value') <= value) {
+                        s.style.color = '#ffc107';
+                    } else {
+                        s.style.color = '#ddd';
+                    }
+                });
+            });
+            
+            star.addEventListener('mouseout', function() {
+                const currentValue = hiddenInput.value;
+                stars.forEach(s => {
+                    if (currentValue && s.getAttribute('data-value') <= currentValue) {
+                        s.style.color = '#ffc107';
+                    } else {
+                        s.style.color = '#ddd';
+                    }
+                });
+            });
+        });
+    });
+    
+    // Валидация формы
+    const form = document.querySelector('form');
+    const textInput = document.getElementById('text');
+    
+    // Проверка длины текста
+    textInput.addEventListener('input', function() {
+        const length = this.value.length;
+        if (length < 10) {
+            this.classList.add('is-invalid');
+            this.classList.remove('is-valid');
+        } else {
+            this.classList.add('is-valid');
+            this.classList.remove('is-invalid');
+        }
+    });
+    
+    form.addEventListener('submit', function(e) {
+        const ratingInputs = document.querySelectorAll('input[type="hidden"][name^="rating_"]');
+        let allRated = true;
+        
+        ratingInputs.forEach(input => {
+            if (!input.value) {
+                allRated = false;
+                input.closest('.rating-category').style.backgroundColor = '#ffe6e6';
+            }
+        });
+        
+        if (!allRated) {
+            e.preventDefault();
+            alert('Пожалуйста, оцените все характеристики преподавания.');
+            return;
+        }
+        
+        if (textInput.value.length < 10) {
+            e.preventDefault();
+            alert('Текст отзыва должен содержать не менее 10 символов.');
+            textInput.focus();
+            return;
+        }
+        
+        // Проверка выбора курса
+        if (!courseSelect.value) {
+            e.preventDefault();
+            alert('Пожалуйста, выберите курс для отзыва.');
+            courseSelect.focus();
+            return;
+        }
+        
+        // Проверка имени
+        const studentName = document.getElementById('student_name').value.trim();
+        if (!studentName) {
+            e.preventDefault();
+            alert('Пожалуйста, введите ваше имя.');
+            return;
+        }
+    });
+    
+    // Автозаполнение имени для авторизованных пользователей
+    {% if user.is_authenticated %}
+    const studentNameInput = document.getElementById('student_name');
+    if (!studentNameInput.value && "{{ user.first_name }}") {
+        studentNameInput.value = "{{ user.first_name }} {{ user.last_name }}";
+    }
+    {% endif %}
+});
+</script>
+{% endblock %}

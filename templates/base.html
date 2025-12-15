@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Репетитор по математике{% endblock %}</title>
+    
+    <!-- Подключение статических файлов -->
+    {% load static %}
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
+    
+    <!-- Подключение CSS файлов -->
+    <link href="{% static 'css/services.css' %}" rel="stylesheet">
+    
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 100px 0;
+        }
+        .service-card {
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+        footer {
+            background-color: #f8f9fa;
+            padding: 40px 0;
+            margin-top: 50px;
+        }
+        .messages-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 1050;
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body>
+    {% include "includes/header.html" %}
+    
+    <!-- Контейнер для сообщений -->
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow" role="alert">
+            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    {% include "includes/footer.html" %}
+
+    <!-- Кнопка "Наверх" -->
+    <button id="backToTop" class="btn btn-primary rounded-circle" style="position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; display: none; z-index: 1000;">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Подключение JavaScript файлов -->
+    <script src="{% static 'js/services.js' %}"></script>
+    
+    <script>
+        // Показываем/скрываем кнопку при прокрутке
+        window.addEventListener('scroll', function() {
+            const backToTopButton = document.getElementById('backToTop');
+            if (window.pageYOffset > 300) {
+                backToTopButton.style.display = 'block';
+            } else {
+                backToTopButton.style.display = 'none';
+            }
+        });
+
+        // Плавная прокрутка наверх при клике
+        document.getElementById('backToTop').addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Автоматическое скрытие сообщений через 5 секунд
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+    </script>
+</body>
+</html>

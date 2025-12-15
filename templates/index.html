@@ -1,0 +1,420 @@
+{% extends 'base.html' %}
+
+{% block title %}Репетитор по математике - Главная{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center">
+    <!-- Полупрозрачный фон -->
+    <div class="hero-background">
+        <img src="https://i.pinimg.com/736x/57/f9/35/57f9358450ca57d50b05516b464aa33e.jpg" alt="Математический фон" class="hero-bg-image">
+        <div class="hero-overlay"></div>
+    </div>
+    
+    <div class="container hero-content">
+        <h1 class="display-4 fw-bold mb-4">Профессиональный репетитор по математике</h1>
+        <p class="lead mb-4">Индивидуальные занятия для школьников и студентов. Подготовка к ЕГЭ, ОГЭ, олимпиадам и помощь по школьной программе.</p>
+        <a href="{% url 'contacts:contacts' %}" class="btn btn-light btn-lg">Записаться на занятие</a>
+    </div>
+</section>
+
+<!-- Почему выбирают меня -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Почему выбирают меня?</h2>
+        <div class="row">
+            <div class="col-md-4 text-center">
+                <i class="fas fa-graduation-cap fa-3x text-primary mb-3"></i>
+                <h4>12 лет опыта</h4>
+                <p>12 лет успешной работы репетитором</p>
+            </div>
+            <div class="col-md-4 text-center">
+                <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
+                <h4>95% успеха</h4>
+                <p>95% учеников сдают ЕГЭ на 80+ баллов</p>
+            </div>
+            <div class="col-md-4 text-center">
+                <i class="fas fa-user-graduate fa-3x text-info mb-3"></i>
+                <h4>Индивидуальный подход</h4>
+                <p>Персональная программа для каждого ученика</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Основные направления -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Основные направления</h2>
+        <div class="row">
+            <div class="col-md-3 mb-4">
+                <div class="card service-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-university fa-2x text-primary mb-3"></i>
+                        <h5 class="card-title">Подготовка к ЕГЭ</h5>
+                        <p class="card-text">Полный курс подготовки к ЕГЭ по математике (профильный и базовый уровень)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card service-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-school fa-2x text-success mb-3"></i>
+                        <h5 class="card-title">Подготовка к ОГЭ</h5>
+                        <p class="card-text">Системная подготовка к ОГЭ по математике для учеников 9 классов</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card service-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-book fa-2x text-warning mb-3"></i>
+                        <h5 class="card-title">Помощь школьникам</h5>
+                        <p class="card-text">Занятия для учащихся 5-11 классов по школьной программе</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card service-card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-trophy fa-2x text-danger mb-3"></i>
+                        <h5 class="card-title">Олимпиады</h5>
+                        <p class="card-text">Подготовка к математическим олимпиадам различного уровня</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Список услуг с использованием цикла (НОВАЯ СЕКЦИЯ ДЛЯ ЛАБОРАТОРНОЙ) -->
+<section class="py-5 services-section">
+    <div class="container">
+        <h2 class="text-center mb-5">Наши услуги</h2>
+        
+        <!-- Горизонтальный список услуг -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-12">
+                <div class="d-flex flex-wrap justify-content-center gap-3 service-buttons-container">
+                    {% for service in services %}
+                    <button class="btn btn-outline-primary service-btn" 
+                            data-service-index="{{ forloop.counter0 }}"
+                            data-bs-toggle="collapse" 
+                            data-bs-target="#serviceDetail{{ forloop.counter0 }}"
+                            aria-expanded="false" 
+                            aria-controls="serviceDetail{{ forloop.counter0 }}">
+                        {{ service.title }}
+                        {% if forloop.first %}
+                        <span class="badge badge-new ms-1">New</span>
+                        {% endif %}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Детальная информация об услугах -->
+        <div class="row">
+            <div class="col-12">
+                {% for service in services %}
+                <div class="collapse service-detail" id="serviceDetail{{ forloop.counter0 }}">
+                    <div class="card mb-3 service-detail-card">
+                        <div class="card-header service-header text-white d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0">{{ service.title }}</h4>
+                            <span class="badge bg-light text-primary">
+                                Услуга {{ forloop.counter }} из {{ services|length }}
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h5>Полное описание:</h5>
+                                    <p class="card-text">{{ service.description }}</p>
+                                    
+                                    <h5 class="mt-4">Краткое описание:</h5>
+                                    <p class="card-text text-muted">
+                                        <em>"{{ service.description|truncatewords:10 }}"</em>
+                                    </p>
+                                    
+                                    <div class="mt-3">
+                                        <span class="badge bg-info">
+                                            {% if forloop.first %}Самая популярная{% endif %}
+                                            {% if forloop.last %}Специальное предложение{% endif %}
+                                        </span>
+                                        <span class="badge bg-secondary ms-1">
+                                            {{ forloop.revcounter }} осталось услуг
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Отзывы учеников -->
+<section class="py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <h2 class="mb-0">Отзывы учеников</h2>
+            {% if reviews %}
+            <a href="{% url 'homepage:all_reviews' %}" class="btn btn-outline-primary">
+                Все отзывы ({{ total_reviews }})
+                <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+            {% endif %}
+        </div>
+        
+        {% if reviews %}
+        <div class="row">
+            {% for review in reviews %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 50px; height: 50px;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h5 class="card-title mb-0">{{ review.student_name }}</h5>
+                                <small class="text-muted">
+                                    {% if review.course %}
+                                        {{ review.course.title }}
+                                    {% else %}
+                                        Курс не указан
+                                    {% endif %}
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <p class="card-text">{{ review.text|truncatewords:30 }}</p>
+                        
+                        <div class="rating-display-small mb-3">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= review.ratings.overall %}
+                                <span class="star active">★</span>
+                                {% else %}
+                                <span class="star">★</span>
+                                {% endif %}
+                            {% endfor %}
+                            <span class="ms-2 text-muted">{{ review.ratings.overall }}/5</span>
+                        </div>
+                        
+                        <div class="text-muted small">
+                            <i class="fas fa-clock me-1"></i>{{ review.timestamp }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'homepage:all_reviews' %}" class="btn btn-primary">
+                <i class="fas fa-list me-2"></i>Посмотреть все отзывы
+            </a>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <div class="card">
+                <div class="card-body">
+                    <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                    <h4>Пока нет отзывов</h4>
+                    <p class="text-muted">Будьте первым, кто оставит отзыв о занятиях!</p>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'homepage:leave_review' %}" class="btn btn-warning">
+                        <i class="fas fa-star me-2"></i>Оставить отзыв
+                    </a>
+                    {% else %}
+                    <a href="{% url 'homepage:login' %}" class="btn btn-warning">
+                        <i class="fas fa-sign-in-alt me-2"></i>Войдите, чтобы оставить отзыв
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+.rating-display {
+    font-size: 2.5rem;
+}
+
+.rating-small {
+    font-size: 1rem;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.star {
+    color: #ddd;
+}
+
+.star.active {
+    color: #ffc107;
+}
+
+.rating-value {
+    font-weight: bold;
+    margin-right: 10px;
+    min-width: 30px;
+    display: inline-block;
+    text-align: center;
+}
+</style>
+
+<style>
+.hero-section {
+    position: relative;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 100px 0;
+    overflow: hidden;
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.hero-bg-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.3; /* Полупрозрачность картинки */
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* Дополнительный затемняющий слой */
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+/* Стили для карточек с отзывами */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 60px 0;
+    }
+    
+    .display-4 {
+        font-size: 2rem;
+    }
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Получаем все кнопки услуг
+    const serviceButtons = document.querySelectorAll('.service-btn');
+    
+    // Добавляем обработчики событий для каждой кнопки
+    serviceButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Убираем активный класс у всех кнопок
+            serviceButtons.forEach(btn => {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-outline-primary');
+            });
+            
+            // Добавляем активный класс к текущей кнопке
+            this.classList.remove('btn-outline-primary');
+            this.classList.add('btn-primary');
+            
+            // Закрываем все другие открытые детали
+            const allDetails = document.querySelectorAll('.collapse');
+            allDetails.forEach(detail => {
+                if (detail.id !== this.getAttribute('data-bs-target').substring(1)) {
+                    const bsCollapse = new bootstrap.Collapse(detail, {
+                        toggle: false
+                    });
+                    bsCollapse.hide();
+                }
+            });
+        });
+        
+        // Обработчик события при открытии collapse
+        const targetId = button.getAttribute('data-bs-target').substring(1);
+        const targetElement = document.getElementById(targetId);
+        
+        targetElement.addEventListener('show.bs.collapse', function() {
+            console.log('Открыта услуга:', button.textContent.trim());
+        });
+        
+        targetElement.addEventListener('hide.bs.collapse', function() {
+            button.classList.remove('btn-primary');
+            button.classList.add('btn-outline-primary');
+        });
+    });
+    
+    // Автоматически открываем первую услугу при загрузке страницы
+    if (serviceButtons.length > 0) {
+        const firstButton = serviceButtons[0];
+        const firstDetail = document.getElementById(firstButton.getAttribute('data-bs-target').substring(1));
+        const bsCollapse = new bootstrap.Collapse(firstDetail, {
+            toggle: true
+        });
+        firstButton.classList.remove('btn-outline-primary');
+        firstButton.classList.add('btn-primary');
+    }
+});
+</script>
+
+<style>
+.service-btn {
+    transition: all 0.3s ease;
+    border-width: 2px;
+}
+
+.service-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.collapse {
+    transition: all 0.3s ease;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .service-btn {
+        flex: 1 0 auto;
+        min-width: 150px;
+        margin: 5px;
+    }
+    
+    .d-flex.flex-wrap {
+        justify-content: center !important;
+    }
+}
+</style>
+{% endblock %}

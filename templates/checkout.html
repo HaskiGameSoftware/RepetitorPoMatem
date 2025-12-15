@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% block title %}Оформление заказа - Репетитор по математике{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-5">Оформление заказа</h1>
+    
+    <div class="row">
+        <!-- Форма оформления -->
+        <div class="col-md-7">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-user-check me-2"></i>Данные покупателя</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" id="checkoutForm">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="student_name" class="form-label">Имя ученика *</label>
+                            <input type="text" class="form-control" id="student_name" 
+                                   name="student_name" required placeholder="Введите имя ученика">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="email" 
+                                   name="email" required placeholder="example@mail.com"
+                                   {% if user.is_authenticated %}value="{{ user.email }}"{% endif %}>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Телефон *</label>
+                            <input type="tel" class="form-control" id="phone" 
+                                   name="phone" required placeholder="+7 (___) ___-__-__">
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <small>
+                                <i class="fas fa-info-circle me-2"></i>
+                                После оформления заказа мы свяжемся с вами для подтверждения и уточнения деталей.
+                            </small>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check me-2"></i>Подтвердить заказ
+                            </button>
+                            <a href="{% url 'homepage:cart' %}" class="btn btn-outline-secondary btn-lg ms-2">
+                                <i class="fas fa-arrow-left me-2"></i>Вернуться в корзину
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Сводка заказа -->
+        <div class="col-md-5">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">Ваш заказ</h4>
+                </div>
+                <div class="card-body">
+                    <h6 class="mb-3">Выбранные курсы:</h6>
+                    
+                    {% for item in cart_items %}
+                    <div class="mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>{{ item.course.title }}</strong>
+                                <br>
+                                <small class="text-muted">{{ item.course.duration }}</small>
+                            </div>
+                            <div class="text-end">
+                                <div class="text-success">{{ item.course.price }} ₽</div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Количество курсов:</span>
+                        <strong>{{ items_count }} шт.</strong>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <span>Итого к оплате:</span>
+                        <h4 class="text-success">{{ total_price }} ₽</h4>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Информация о заказе</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled small">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Гарантия возврата средств в течение 3 дней
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Доступ к материалам сразу после оплаты
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            Поддержка преподавателя 24/7
+                        </li>
+                        <li>
+                            <i class="fas fa-check text-success me-2"></i>
+                            Сертификат об окончании курса
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-control:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+.card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-lg {
+    padding: 12px 24px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Маска для телефона
+    const phoneInput = document.getElementById('phone');
+    phoneInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.startsWith('7') || value.startsWith('8')) {
+            value = value.substring(1);
+        }
+        if (value.length > 10) {
+            value = value.substring(0, 10);
+        }
+        
+        let formatted = '';
+        if (value.length > 0) {
+            formatted = '+7 (' + value.substring(0, 3);
+            if (value.length > 3) {
+                formatted += ') ' + value.substring(3, 6);
+            }
+            if (value.length > 6) {
+                formatted += '-' + value.substring(6, 8);
+            }
+            if (value.length > 8) {
+                formatted += '-' + value.substring(8, 10);
+            }
+        }
+        e.target.value = formatted;
+    });
+    
+    // Валидация формы
+    const form = document.getElementById('checkoutForm');
+    form.addEventListener('submit', function(e) {
+        const phone = phoneInput.value.replace(/\D/g, '');
+        if (phone.length !== 11 && phone.length !== 10) {
+            e.preventDefault();
+            alert('Пожалуйста, введите корректный номер телефона.');
+            phoneInput.focus();
+            return;
+        }
+        
+        // Подтверждение заказа
+        if (!confirm('Вы уверены, что хотите оформить заказ?')) {
+            e.preventDefault();
+        }
+    });
+});
+</script>
+{% endblock %}

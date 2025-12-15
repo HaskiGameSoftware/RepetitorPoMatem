@@ -1,0 +1,30 @@
+/* Стили для корзины */
+.cart-item {
+    transition: all 0.3s ease;
+}
+
+.cart-item:hover {
+    background-color: #f8f9fa;
+}
+
+.cart-badge {
+    font-size: 0.7rem;
+    padding: 0.2em 0.5em;
+}
+
+.cart-empty {
+    color: #6c757d;
+}
+
+.cart-total {
+    font-weight: bold;
+    color: #198754;
+}
+
+.checkout-form input:valid {
+    border-color: #198754;
+}
+
+.checkout-form input:invalid {
+    border-color: #dc3545;
+}

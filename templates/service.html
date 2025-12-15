@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Услуги - Репетитор по математике{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-5">Услуги и цены</h1>
+    
+    <!-- Формы занятий -->
+    <section class="mb-5">
+        <h2 class="text-center mb-4">Формы занятий</h2>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h4>Индивидуальные занятия</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Персональный подход и программа, разработанная specifically под ваши цели и уровень подготовки.</p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">60 минут - 2000 рублей</li>
+                            <li class="list-group-item">90 минут - 2800 рублей</li>
+                            <li class="list-group-item">120 минут - 3500 рублей</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-success text-white text-center">
+                        <h4>Мини-группы (2-3 человека)</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Экономия до 30% при сохранении эффективности обучения. Группы формируются по уровню подготовки.</p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">60 минут - 1500 рублей с человека</li>
+                            <li class="list-group-item">90 минут - 2000 рублей с человека</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Направления подготовки -->
+    <section class="mb-5">
+        <h2 class="text-center mb-4">Направления подготовки</h2>
+        <div class="accordion" id="directionsAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#ege">
+                        Подготовка к ЕГЭ
+                    </button>
+                </h2>
+                <div id="ege" class="accordion-collapse collapse show" data-bs-parent="#directionsAccordion">
+                    <div class="accordion-body">
+                        <p>Полный курс подготовки к ЕГЭ по математике (профильный и базовый уровень)</p>
+                        <ul>
+                            <li>Диагностика текущего уровня</li>
+                            <li>Проработка всех тем кодификатора</li>
+                            <li>Регулярные пробные тестирования</li>
+                            <li>Разбор сложных заданий второй части</li>
+                        </ul>
+                        <p class="fw-bold">Рекомендуемая интенсивность: 2 раза в неделю по 90 минут</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#oge">
+                        Подготовка к ОГЭ
+                    </button>
+                </h2>
+                <div id="oge" class="accordion-collapse collapse" data-bs-parent="#directionsAccordion">
+                    <div class="accordion-body">
+                        <p>Комплексная подготовка к ОГЭ для учеников 9 классов</p>
+                        <ul>
+                            <li>Ликвидация пробелов в знаниях</li>
+                            <li>Отработка всех типов заданий ОГЭ</li>
+                            <li>Развитие вычислительных навыков</li>
+                            <li>Формирование уверенности на экзамене</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Система скидок -->
+    <section class="mb-5">
+        <h2 class="text-center mb-4">Система скидок</h2>
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="alert alert-info">
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i>При оплате за месяц вперед - скидка 10%</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Занятия в утренние часы (до 14:00) - скидка 15%</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Для студентов очного отделения - скидка 10%</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Многодетным семьям - скидка 10%</li>
+                        <li><i class="fas fa-info text-warning me-2"></i>Скидки не суммируются</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

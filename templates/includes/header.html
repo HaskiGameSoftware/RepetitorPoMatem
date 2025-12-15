@@ -1,0 +1,38 @@
+<header class="bg-primary py-3">
+    <div class="container">
+        <nav class="text-center">
+            <a href="{% url 'homepage:index' %}" class="btn btn-light mx-1">Главная</a>
+            <a href="{% url 'about:about' %}" class="btn btn-light mx-1">О репетиторе</a>
+            <a href="{% url 'service:service' %}" class="btn btn-light mx-1">Услуги</a>
+            <a href="{% url 'homepage:courses' %}" class="btn btn-light mx-1">Курсы</a>
+            <a href="{% url 'homepage:all_reviews' %}" class="btn btn-light mx-1">Отзывы</a>
+            <a href="{% url 'contacts:contacts' %}" class="btn btn-light mx-1">Контакты</a>
+            <a href="{% url 'homepage:cart' %}" class="btn btn-light mx-1 position-relative">
+                <i class="fas fa-shopping-cart me-1"></i>Корзина
+                {% with cart=request.cart %}
+                    {% if cart and cart.items_count > 0 %}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{ cart.items_count }}
+                    </span>
+                    {% endif %}
+                {% endwith %}
+            </a>
+            
+            {% if user.is_authenticated %}
+                <a href="{% url 'homepage:personal_cabinet' %}" class="btn btn-warning mx-1">
+                    <i class="fas fa-user me-1"></i>Личный кабинет
+                </a>
+                <a href="{% url 'homepage:logout' %}" class="btn btn-outline-light mx-1">
+                    <i class="fas fa-sign-out-alt me-1"></i>Выйти
+                </a>
+            {% else %}
+                <a href="{% url 'homepage:login' %}" class="btn btn-success mx-1">
+                    <i class="fas fa-sign-in-alt me-1"></i>Войти
+                </a>
+                <a href="{% url 'homepage:register' %}" class="btn btn-outline-light mx-1">
+                    <i class="fas fa-user-plus me-1"></i>Регистрация
+                </a>
+            {% endif %}
+        </nav>
+    </div>
+</header>

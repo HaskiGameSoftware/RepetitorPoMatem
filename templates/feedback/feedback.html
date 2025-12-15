@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+
+{% block title %}Обратная связь - Репетитор по математике{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h3 class="mb-0"><i class="fas fa-comments me-2"></i>Форма обратной связи</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Общие ошибки формы -->
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <form method="POST" id="feedbackForm">
+                        {% csrf_token %}
+                        
+                        <!-- Поле ФИО -->
+                        <div class="mb-3">
+                            <label for="{{ form.name.id_for_label }}" class="form-label">
+                                {{ form.name.label }} *
+                            </label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="text-danger small mt-1">
+                                    <i class="fas fa-exclamation-circle me-1"></i>
+                                    {% for error in form.name.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Введите полное ФИО (три слова через пробел). Пример: Иванов Иван Иванович
+                            </div>
+                        </div>
+                        
+                        <!-- Поле email -->
+                        <div class="mb-3">
+                            <label for="{{ form.email.id_for_label }}" class="form-label">
+                                {{ form.email.label }} *
+                            </label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger small mt-1">
+                                    <i class="fas fa-exclamation-circle me-1"></i>
+                                    {% for error in form.email.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Поле сообщения -->
+                        <div class="mb-3">
+                            <label for="{{ form.message.id_for_label }}" class="form-label">
+                                {{ form.message.label }} *
+                            </label>
+                            {{ form.message }}
+                            {% if form.message.errors %}
+                                <div class="text-danger small mt-1">
+                                    <i class="fas fa-exclamation-circle me-1"></i>
+                                    {% for error in form.message.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                Минимальная длина сообщения: 10 символов. Сообщения с нецензурной лексикой не принимаются.
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <small>
+                                <i class="fas fa-info-circle me-2"></i>
+                                Все поля обязательны для заполнения. Мы свяжемся с вами в ближайшее время.
+                            </small>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-info btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i>Отправить сообщение
+                            </button>
+                            <a href="{% url 'contacts:contacts' %}" class="btn btn-outline-secondary btn-lg ms-2">
+                                <i class="fas fa-arrow-left me-2"></i>Назад к контактам
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-control:focus {
+    border-color: #0dcaf0;
+    box-shadow: 0 0 0 0.2rem rgba(13, 202, 240, 0.25);
+}
+
+.text-danger {
+    font-size: 0.875rem;
+}
+
+/* Стиль для невалидных полей */
+.form-control.is-invalid {
+    border-color: #dc3545;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath d='m5.8 3.6.4.4.4-.4'/%3e%3cpath d='M6 7v1'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+/* Стиль для валидных полей */
+.form-control.is-valid {
+    border-color: #198754;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const feedbackForm = document.getElementById('feedbackForm');
+    const nameInput = document.getElementById('id_name');
+    const messageInput = document.getElementById('id_message');
+    
+    // Функция для проверки ФИО
+    function validateName(name) {
+        const words = name.trim().split(/\s+/);
+        
+        // Проверяем количество слов
+        if (words.length !== 3) {
+            return { isValid: false, message: 'ФИО должно содержать ровно 3 слова' };
+        }
+        
+        // Проверяем, что каждое слово начинается с заглавной буквы
+        for (let word of words) {
+            if (word.length < 2) {
+                return { isValid: false, message: 'Каждое слово должно содержать минимум 2 буквы' };
+            }
+            if (!/^[A-ZА-ЯЁ]/.test(word)) {
+                return { isValid: false, message: 'Каждое слово должно начинаться с заглавной буквы' };
+            }
+            if (!/^[A-Za-zА-Яа-яЁё\-]+$/.test(word)) {
+                return { isValid: false, message: 'ФИО может содержать только буквы и дефисы' };
+            }
+        }
+        
+        return { isValid: true };
+    }
+    
+    // Автоматическое форматирование ФИО при вводе
+    nameInput.addEventListener('input', function() {
+        let value = this.value;
+        
+        // Удаляем цифры и специальные символы (кроме дефиса)
+        value = value.replace(/[^A-Za-zА-Яа-яЁё\s\-]/g, '');
+        
+        // Заменяем множественные пробелы на один
+        value = value.replace(/\s+/g, ' ');
+        
+        this.value = value;
+    });
+    
+    // Проверка ФИО при потере фокуса
+    nameInput.addEventListener('blur', function() {
+        const value = this.value.trim();
+        if (value) {
+            const validation = validateName(value);
+            if (validation.isValid) {
+                // Форматируем ФИО: каждое слово с заглавной буквы
+                const words = value.split(' ').map(word => 
+                    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                );
+                this.value = words.join(' ');
+                this.classList.add('is-valid');
+                this.classList.remove('is-invalid');
+            } else {
+                this.classList.add('is-invalid');
+                this.classList.remove('is-valid');
+            }
+        }
+    });
+    
+    // Проверка сообщения на запрещенные слова (клиентская сторона)
+    const badWords = {{ form.BAD_WORDS|safe }};
+    
+    messageInput.addEventListener('input', function() {
+        const value = this.value.toLowerCase();
+        let hasBadWord = false;
+        
+        for (let badWord of badWords) {
+            if (value.includes(badWord)) {
+                hasBadWord = true;
+                break;
+            }
+        }
+        
+        if (hasBadWord && value.length > 0) {
+            this.classList.add('is-invalid');
+            this.classList.remove('is-valid');
+        } else if (value.length >= 10) {
+            this.classList.add('is-valid');
+            this.classList.remove('is-invalid');
+        }
+    });
+    
+    // Добавляем классы для стилизации полей при изменении
+    const formInputs = document.querySelectorAll('.form-control');
+    
+    formInputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.value.trim() !== '') {
+                this.classList.add('is-valid');
+                this.classList.remove('is-invalid');
+            } else {
+                this.classList.add('is-invalid');
+                this.classList.remove('is-valid');
+            }
+        });
+        
+        input.addEventListener('input', function() {
+            if (this.value.trim() !== '') {
+                this.classList.add('is-valid');
+                this.classList.remove('is-invalid');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

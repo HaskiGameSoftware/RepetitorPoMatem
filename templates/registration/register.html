@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Регистрация - Репетитор по математике{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-user-plus me-2"></i>Регистрация</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        {% if messages %}
+                            {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" name="email" class="form-control" id="email" required 
+                                   placeholder="example@mail.com">
+                            <div class="form-text">На этот email будут приходить уведомления</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password1" class="form-label">Пароль *</label>
+                            <input type="password" name="password1" class="form-control" id="password1" required 
+                                   placeholder="Введите пароль">
+                            <div class="form-text">
+                                <ul class="small">
+                                    <li>Пароль не должен быть слишком простым</li>
+                                    <li>Пароль должен содержать минимум 8 символов</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password2" class="form-label">Подтверждение пароля *</label>
+                            <input type="password" name="password2" class="form-control" id="password2" required 
+                                   placeholder="Повторите пароль">
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <small>
+                                <i class="fas fa-info-circle me-2"></i>
+                                После регистрации вы сможете оставлять отзывы и отслеживать свои курсы.
+                            </small>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-user-plus me-2"></i>Зарегистрироваться
+                            </button>
+                            <a href="{% url 'homepage:login' %}" class="btn btn-outline-secondary btn-lg ms-2">
+                                <i class="fas fa-sign-in-alt me-2"></i>Уже есть аккаунт?
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const password1 = document.getElementById('password1');
+    const password2 = document.getElementById('password2');
+    
+    // Показать/скрыть пароль
+    [password1, password2].forEach(input => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'input-group';
+        
+        const parent = input.parentNode;
+        parent.insertBefore(wrapper, input);
+        wrapper.appendChild(input);
+        
+        const toggleButton = document.createElement('button');
+        toggleButton.className = 'btn btn-outline-secondary';
+        toggleButton.type = 'button';
+        toggleButton.innerHTML = '<i class="fas fa-eye"></i>';
+        
+        const buttonGroup = document.createElement('div');
+        buttonGroup.className = 'input-group-append';
+        buttonGroup.appendChild(toggleButton);
+        wrapper.appendChild(buttonGroup);
+        
+        toggleButton.addEventListener('click', function() {
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+            this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        });
+    });
+    
+    // Валидация паролей
+    function validatePasswords() {
+        if (password1.value !== password2.value && password2.value !== '') {
+            password2.classList.add('is-invalid');
+            password2.classList.remove('is-valid');
+        } else if (password2.value !== '') {
+            password2.classList.add('is-valid');
+            password2.classList.remove('is-invalid');
+        }
+    }
+    
+    password1.addEventListener('input', validatePasswords);
+    password2.addEventListener('input', validatePasswords);
+});
+</script>
+{% endblock %}

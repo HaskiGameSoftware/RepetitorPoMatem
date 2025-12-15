@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block title %}Корзина - Репетитор по математике{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-5">Корзина</h1>
+    
+    {% if cart_items %}
+    <div class="row">
+        <!-- Список товаров -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Выбранные курсы ({{ items_count }})</h4>
+                </div>
+                <div class="card-body">
+                    {% for item in cart_items %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h5 class="card-title">{{ item.course.title }}</h5>
+                                    <p class="card-text text-muted small mb-2">{{ item.course.description|truncatewords:20 }}</p>
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-info me-3">{{ item.course.duration }}</span>
+                                        <span class="text-muted">
+                                            <i class="fas fa-users me-1"></i>
+                                            Осталось мест: {{ item.course.available_slots }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <h5 class="text-success">{{ item.course.price }} ₽</h5>
+                                    <div class="mt-3">
+                                        <a href="{% url 'homepage:remove_from_cart' item.id %}" 
+                                           class="btn btn-sm btn-outline-danger"
+                                           onclick="return confirm('Удалить курс из корзины?')">
+                                            <i class="fas fa-trash me-1"></i>Удалить
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'homepage:clear_cart' %}" 
+                           class="btn btn-outline-danger"
+                           onclick="return confirm('Очистить всю корзину?')">
+                            <i class="fas fa-trash me-2"></i>Очистить корзину
+                        </a>
+                        <a href="{% url 'homepage:courses' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-plus me-2"></i>Добавить еще курсы
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Итоги и оформление -->
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">Итог</h4>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Курсы:</span>
+                        <span>{{ items_count }} шт.</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Общая стоимость:</span>
+                        <h5 class="mb-0 text-success">{{ total_price }} ₽</h5>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="alert alert-info small">
+                        <i class="fas fa-info-circle me-2"></i>
+                        После оформления заказа мы свяжемся с вами для подтверждения.
+                    </div>
+                    
+                    <a href="{% url 'homepage:checkout' %}" class="btn btn-success w-100 btn-lg">
+                        <i class="fas fa-shopping-cart me-2"></i>Перейти к оформлению
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Безопасная оплата</h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <i class="fas fa-lock fa-2x text-success mb-3"></i>
+                        <p class="small">Все платежи защищены. Мы не храним данные вашей карты.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <div class="card">
+            <div class="card-body">
+                <i class="fas fa-shopping-cart fa-4x text-muted mb-4"></i>
+                <h3>Ваша корзина пуста</h3>
+                <p class="text-muted mb-4">Добавьте курсы, чтобы начать обучение.</p>
+                <a href="{% url 'homepage:courses' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-graduation-cap me-2"></i>Посмотреть курсы
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.btn-lg {
+    padding: 12px 24px;
+    font-size: 1.1rem;
+}
+
+.text-success {
+    color: #198754 !important;
+}
+
+.badge {
+    font-size: 0.8rem;
+    padding: 0.35em 0.65em;
+}
+</style>
+{% endblock %}

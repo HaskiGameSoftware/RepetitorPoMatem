@@ -1,0 +1,307 @@
+{% extends 'base.html' %}
+
+{% block title %}Контакты - Репетитор по математике{% endblock %}
+
+{% block content %}
+
+{% load tz %}
+
+<div class="container py-5"> 
+    <h1 class="text-center mb-5">Контакты</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="card-title"><i class="fas fa-phone me-2"></i>Свяжитесь со мной</h3>
+                    <p class="card-text">Готовы начать занятия или есть вопросы? Я всегда на связи!</p>
+                    
+                    <h5>Контактная информация:</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <i class="fas fa-phone me-2 text-success"></i>Телефон: +7 (915) 123-45-67
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-envelope me-2 text-primary"></i>Email: math.tutor@example.com
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fab fa-telegram me-2 text-info"></i>
+                            <a href="https://t.me/math_tutor_anna" target="_blank" class="text-decoration-none">
+                                Telegram: @math_tutor_anna
+                            </a>
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fab fa-whatsapp me-2 text-success"></i>WhatsApp: +7 (915) 123-45-67
+                        </li>
+                        <div class="text-center mt-4">
+                            <a href="{% url 'feedback:feedback' %}" class="btn btn-info btn-lg mb-3">
+                                <i class="fas fa-comments me-2"></i>Написать сообщение
+                            </a>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="card-title"><i class="fas fa-map-marker-alt me-2"></i>Место проведения занятий</h3>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <i class="fas fa-user me-2 text-warning"></i>Очно: м. Проспект Мира, ул. Гиляровского, д. 15
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-video me-2 text-info"></i>Онлайн: Zoom, Skype
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title"><i class="fas fa-clock me-2"></i>График работы</h3>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Пн-Пт: 9:00 - 20:00</li>
+                        <li class="list-group-item">Сб: 10:00 - 16:00</li>
+                        <li class="list-group-item">Вс: выходной</li>
+                    </ul>
+                    <div class="alert alert-success mt-3">
+                        <strong>Первая консультация (30 минут) - бесплатно!</strong>
+                    </div>
+                    <div class="text-center mt-4">
+                        <a href="https://t.me/math_tutor_anna" target="_blank" class="btn btn-primary btn-lg">
+                            <i class="fab fa-telegram me-2"></i>Написать в Telegram
+                        </a>                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.time-slot-available {
+    color: green;
+    font-weight: normal;
+}
+
+.time-slot-busy {
+    color: #dc3545;
+    font-weight: normal;
+    text-decoration: line-through;
+}
+
+.time-slot-unavailable {
+    color: #6c757d;
+    font-weight: normal;
+    text-decoration: line-through;
+}
+
+/* Стиль для невалидных полей */
+input:invalid {
+    border-color: #dc3545;
+}
+
+input:valid {
+    border-color: #198754;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const lessonDateInput = document.getElementById('lessonDate');
+    const lessonTimeSelect = document.getElementById('lessonTime');
+    const appointmentForm = document.getElementById('appointmentForm');
+    const phoneInput = document.getElementById('phone');
+    const studentNameInput = document.getElementById('studentName');
+    const parentNameInput = document.getElementById('parentName');
+
+    // ===== ВАЛИДАЦИЯ ФИО =====
+    function validateNameInput(input) {
+        input.addEventListener('input', function() {
+            // Удаляем цифры и специальные символы, оставляем только буквы, пробелы и дефисы
+            this.value = this.value.replace(/[^A-Za-zА-Яа-яЁё\s\-]/g, '');
+        });
+        
+        // Дополнительная проверка при потере фокуса
+        input.addEventListener('blur', function() {
+            this.value = this.value.trim().replace(/\s+/g, ' ');
+        });
+    }
+
+    // Применяем валидацию к полям ФИО
+    validateNameInput(studentNameInput);
+    validateNameInput(parentNameInput);
+
+    // ===== МАСКА ДЛЯ ТЕЛЕФОНА =====
+    phoneInput.addEventListener('input', function(e) {
+        let input = e.target.value.replace(/\D/g, ''); // Удаляем все нецифровые символы
+        let formattedInput = '';
+        
+        if (input.startsWith('7') || input.startsWith('8')) {
+            input = input.substring(1); // Убираем первую 7 или 8
+        }
+        
+        // Ограничиваем длину номера (10 цифр без кода страны)
+        if (input.length > 10) {
+            input = input.substring(0, 10);
+        }
+        
+        // Форматируем номер
+        if (input.length > 0) {
+            formattedInput = '+7 (';
+            if (input.length > 0) {
+                formattedInput += input.substring(0, 3);
+            }
+            if (input.length > 3) {
+                formattedInput += ') ' + input.substring(3, 6);
+            }
+            if (input.length > 6) {
+                formattedInput += '-' + input.substring(6, 8);
+            }
+            if (input.length > 8) {
+                formattedInput += '-' + input.substring(8, 10);
+            }
+        }
+        
+        e.target.value = formattedInput;
+    });
+
+    // Валидация телефона при отправке формы
+    function validatePhone(phone) {
+        const phoneDigits = phone.replace(/\D/g, '');
+        return phoneDigits.length === 11 || phoneDigits.length === 10;
+    }
+
+    // Занятые временные слоты (имитация данных)
+    const busySlots = {
+        '2024-01-15': ['10:00', '14:00', '16:00'],
+        '2024-01-16': ['09:00', '11:00', '15:00', '17:00'],
+        '2024-01-17': ['13:00', '18:00'],
+        // Добавьте другие даты по необходимости
+    };
+
+    // Генерация временных слотов
+    function generateTimeSlots() {
+        const selectedDate = lessonDateInput.value;
+        lessonTimeSelect.innerHTML = '<option value="">Выберите время</option>';
+
+        if (!selectedDate) return;
+
+        const timeSlots = [];
+        
+        // Рабочие часы: Пн-Пт 9:00-20:00, Сб 10:00-16:00
+        const date = new Date(selectedDate);
+        const dayOfWeek = date.getDay(); // 0 - воскресенье, 1 - понедельник, и т.д.
+        
+        let startHour, endHour;
+        
+        if (dayOfWeek === 0) { // Воскресенье - выходной
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'Воскресенье - выходной';
+            option.disabled = true;
+            option.className = 'time-slot-unavailable';
+            lessonTimeSelect.appendChild(option);
+            return;
+        } else if (dayOfWeek === 6) { // Суббота
+            startHour = 10;
+            endHour = 16;
+        } else { // Пн-Пт
+            startHour = 9;
+            endHour = 20;
+        }
+
+        // Создание слотов по 60 минут
+        for (let hour = startHour; hour < endHour; hour++) {
+            const timeSlot = `${hour.toString().padStart(2, '0')}:00`;
+            timeSlots.push(timeSlot);
+        }
+
+        // Добавление слотов в выпадающий список
+        timeSlots.forEach(slot => {
+            const option = document.createElement('option');
+            option.value = slot;
+            
+            // Проверка, занят ли слот
+            const isBusy = busySlots[selectedDate] && busySlots[selectedDate].includes(slot);
+            
+            if (isBusy) {
+                option.textContent = `${slot} - занято`;
+                option.disabled = true;
+                option.className = 'time-slot-busy';
+            } else {
+                option.textContent = `${slot} - свободно`;
+                option.className = 'time-slot-available';
+            }
+            
+            lessonTimeSelect.appendChild(option);
+        });
+    }
+
+    // Обновление временных слотов при изменении даты
+    lessonDateInput.addEventListener('change', generateTimeSlots);
+
+    // Обработка отправки формы
+    appointmentForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Дополнительная валидация перед отправкой
+        if (!validatePhone(phoneInput.value)) {
+            alert('Пожалуйста, введите корректный номер телефона.');
+            phoneInput.focus();
+            return;
+        }
+
+        // Проверка ФИО ученика (обязательное поле)
+        if (!studentNameInput.value.trim()) {
+            alert('Пожалуйста, введите ФИО ученика.');
+            studentNameInput.focus();
+            return;
+        }
+        
+        // Здесь должна быть логика отправки данных на сервер
+        const formData = {
+            studentName: document.getElementById('studentName').value,
+            parentName: document.getElementById('parentName').value,
+            phone: document.getElementById('phone').value,
+            email: document.getElementById('email').value,
+            lessonType: document.getElementById('lessonType').value,
+            lessonFormat: document.getElementById('lessonFormat').value,
+            lessonDate: document.getElementById('lessonDate').value,
+            lessonTime: document.getElementById('lessonTime').value,
+            comment: document.getElementById('comment').value
+        };
+        
+        console.log('Данные формы:', formData);
+        
+        // Имитация успешной отправки
+        alert('Заявка отправлена! Я свяжусь с вами в течение 24 часов для подтверждения записи.');
+        appointmentForm.reset();
+        bookingForm.style.display = 'none';
+        
+        // Можно добавить AJAX запрос для реальной отправки данных
+        /*
+        fetch('/api/book-lesson', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('Заявка отправлена успешно!');
+            appointmentForm.reset();
+            bookingForm.style.display = 'none';
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Произошла ошибка при отправке заявки. Пожалуйста, попробуйте еще раз или свяжитесь со мной другим способом.');
+        });
+        */
+    });
+});
+</script>
+
+{% endblock %}
